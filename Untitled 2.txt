@@ -1,0 +1,99 @@
+awk 'NR==FNR {indices[$1]; next} (FNR in indices)' thresholded_indices.csv /camp/home/weie/lab_space_weie/notlogged_coverage/new/cleaned_stacked_sequences.fasta > thresholded.fasta
+
+
+awk 'NR==FNR {indices[$1]; next} (FNR in indices)' chr1_indices.csv non_HC_intervals.fasta > non_HC_chr1_samples.fasta
+
+
+awk 'NR==FNR {indices[$1]; next} !(FNR in indices)' chr1_indices.csv non_HC_intervals.fasta > non_HC_other_samples.fasta
+
+
+awk 'NR==FNR {indices[$1]; next} !((FNR in indices) || ((FNR-1) in indices))' chr1_indices.csv thresholded.fasta > other_chr.fasta
+
+
+
+srun --ntasks=1 --cpus-per-task=4 --partition=nint --time=08:00:00 --mem=32G --pty bash
+
+modisco report -i /camp/home/weie/lab_space_weie/training/TF-modisco/modisco_results.h5 -o report/ -s /camp/home/weie/lab_space_weie/training/TF-modisco/ -m /camp/home/weie/lab_space_weie/ENCSR000EGM/JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+
+bedtools intersect -wa -a thresholded_samples.bed -b HC_elements_coordinates.bed > all_HC_intervals.bed
+
+
+python run_deepexplainer_exampleviz.py -m /camp/home/weie/lab_space_weie/training/HC_elements/models/final_model_WT_D9_p2_NFIAn.mRp.clN.bigWig_lr_0.000005.keras -s /camp/home/weie/lab_space_weie/training/HC_elements/all_HC_intervals.fasta -b random
+
+
+python run_deepexplainer_exampleviz.py -m /camp/home/weie/lab_space_weie/training/HC_elements/models/final_model_WT_D9_p2_NFIAn.mRp.clN.bigWig_lr_0.00001.keras -s /camp/home/weie/lab_space_weie/training/HC_elements/grouped_HC_elements/Early_1_indices.fasta -b dinuc_shuffle  -o Early_1.h5
+
+
+
+
+
+python run_deepexplain_pipeline0.py -m /camp/home/weie/lab_space_weie/training/HC_elements/models/final_model_WT_D9_p2_NFIAn.mRp.clN.bigWig_lr_0.00001.keras -s /camp/home/weie/lab_space_weie/training/TF-modisco/npz/interval_onehot_Early_1_indices.npz -b random 
+
+
+modisco motifs -s /camp/home/weie/lab_space_weie/training/toy.fa -a shap.npz -n 2000 -o modisco_results.h5
+
+
+modisco report -i /camp/home/weie/lab_space_weie/training/TF-modisco/modisco_results.h5 -o /camp/home/weie/lab_space_weie/training/TF-modisco/report/ -s /camp/home/weie/lab_space_weie/training/TF-modisco/report/ -m /camp/home/weie/lab_space_weie/ENCSR000EGM/JASPAR2022_CORE_vertebrates_non-redu
+ndant_pfms_meme.txt
+
+
+
+
+
+
+python train_OG_architecture_nogen.py --label_column "WT_D9_p1_NFIAn.mRp.clN.bigWig" --lr_option 0.00001 --train_sequences_path "/camp/home/weie/lab_space_weie/training/HC_elements/non_HC_other_samples.fasta" --train_labels_path "/camp/home/weie/lab_space_weie/training/HC_elements/non_HC_other_samples.csv" --val_sequences_path "/camp/home/weie/lab_space_weie/training/HC_elements/non_HC_chr1_samples.fasta" --val_labels_path "/camp/home/weie/lab_space_weie/training/HC_elements/non_HC_chr1_samples.csv" --test_sequences_path "/camp/home/weie/lab_space_weie/training/HC_elements/all_HC_intervals.fasta" --test_labels_path "/camp/home/weie/lab_space_weie/training/HC_elements/all_HC_intervals.csv"
+
+
+
+python /camp/home/weie/lab_space_weie/training/HC_elements/test_testpredict.py --label_column "WT_D7_p1_NFIAn.mRp.clN.bigWig" --batch_size 128 --model_path "/camp/home/weie/lab_space_weie/training/HC_elements/models/New_models/final_model_WT_D7_p1_NFIAn.mRp.clN.bigWig_lr_0.00001.keras"
+
+
+
+
+
+
+modisco motifs -s /camp/home/weie/lab_space_weie/training/TF-modisco/npz/interval_onehot_Late_2_indices.npz -a /camp/home/weie/lab_space_weie/training/TF-modisco/input_files/contrib_scores_D5_pM_NFIAn_Late_2.npz -n 2000 -o /camp/home/weie/lab_space_weie/training/TF-modisco/modisco_results.h5
+
+
+
+modisco motifs -s /camp/home/weie/lab_space_weie/training/TF-modisco/npz/HC_interval_onehot_Early_1.npz -a /camp/home/weie/lab_space_weie/training/TF-modisco/input_files/contrib_scores_D9_pM_NFIAp_Early_1.npz -n 2000 -o /camp/home/weie/lab_space_weie/training/TF-modisco/modisco_results.h5
+
+try:
+
+
+
+modisco motifs -s /camp/home/weie/lab_space_weie/training/TF-modisco/npz/interval_onehot_Early_1_indices.npz -a /camp/home/weie/lab_space_weie/training/TF-modisco/npz/contrib_scores_Early_1.npz -n 2000 -o /camp/home/weie/lab_space_weie/training/TF-modisco/modisco_results.h5
+
+workked
+
+
+
+modisco motifs -s /camp/home/weie/lab_space_weie/training/TF-modisco/npz/interval_onehot_Early_1_indices.npz -a /camp/home/weie/lab_space_weie/training/TF-modisco/input_files/hyp_contrib_score_D9_pM_NFIAp_Early_1.npz -n 2000 -o /camp/home/weie/lab_space_weie/training/TF-modisco/modisco_results_trial.h5
+
+worked
+
+
+modisco report -i /camp/home/weie/lab_space_weie/training/TF-modisco/modisco_results_trial.h5 -o /camp/home/weie/lab_space_weie/training/TF-modisco/report/ -s /camp/home/weie/lab_space_weie/training/TF-modisco/report/ -m /camp/home/weie/lab_space_weie/training/TF-modisco/JASPAR/JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+
+modisco report -i /camp/home/weie/lab_space_weie/training/TF-modisco/modisco_results_trial.h5 -o /camp/home/weie/lab_space_weie/training/TF-modisco/report/ -m /camp/home/weie/lab_space_weie/training/TF-modisco/JASPAR/JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+
+wget --quiet \
+https://jaspar.genereg.net/download/data/2022/CORE/JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt \
+-O /JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+
+
+modisco motifs -s ../bpnet/ohe.npz -a ../bpnet/attr.npz -n 2000 -o modisco_results.h5
+
+
+modisco report -i modisco_results.h5 -o report/ -s  -m /camp/home/weie/lab_space_weie/training/TF-modisco/JASPAR/JASPAR2022_CORE_vertebrates_non-redundant_pfms_meme.txt
+
+
+
+awk 'NR==FNR {indices[$1]; next} (FNR in indices)' indicesnegtestD5_p1.txt WT_D5_p1_NFIAn_negatives.fasta > D5_p1negtest.fasta
+
+bedtools getfasta -s -fi /nemo/lab/briscoej/home/users/delasj/hpc_camp/Glial_ATAC/results/genome/genome.fa -bed D5_p1negtest.bed -fo D5_p1_negtest.fasta
+
+
+python insert_motifAB.py --motifA 'AAAA' --motifB 'TTTTTTT' --output_csv '/camp/home/weie/lab_space_weie/training/interaction_analysis/toy.csv'
+
+

@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Directory containing the models
+model_dir="/camp/home/weie/lab_space_weie/training/new_models/new_models"
+
+# Define motifs and their corresponding names
+declare -A motif_names
+# motif_names["GGGGGCGGGGG"]="Patz1"
+motif_names["TTGGCxxxxxGCCAA"]="Nfia"
+motif_names["CAGCTG"]='Neurod2'
+# # motif_names["AACAAT"]="Sox6"
+motif_names["GTTGCxxxGCAAC"]="Rfx4"
+# # motif_names["CCTTTGT"]="Sox2"
+# motif_names["GACCACCACCCACGxxG"]='Gli2'
+# motif_names["ATTTGCAT"]='Pou2f2'
+# motif_names["TACATGTA"]='Irx3'
+motif_names["AACAATGG"]="Sox9"
+motif_names["AACAGCTG"]='Tcf12'
+motif_names["CAGATGG"]='Neurod1'
+
+# Iterate over each model file
+for model in ${model_dir}/D11_pM_NFIA?.h5; do
+    # Extract base name of the model file (excluding the .h5 extension)
+    base_name=$(basename "$model" .h5)
+
+    # Iterate over each motif
+    for motifA in "${!motif_names[@]}"; do
+        # Determine motif names
+        motifA_name="${motif_names[$motifA]}"
+        
+        # Define output CSV file path
+        output_csv="baseline_activity/new_all/bootstrap_${base_name}_${motifA_name}.csv"
+        
+        # Check if the output CSV file exists
+        if [[ ! -f "$output_csv" ]]; then
+            job_name="${base_name}_${motifA_name}"
+            echo "Running job: $job_name"
+            
+            # Load the required modules
+            # Run Python script
+            python /camp/home/weie/lab_space_weie/training/interaction_analysis/bootstrap.py \
+                --model_path "${model}" \
+                --motifA "${motifA}" \
+                --output_csv "$output_csv"
+
+        else
+            echo "Output file $output_csv already exists. Skipping job execution for $job_name."
+        fi
+
+    done
+done

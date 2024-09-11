@@ -1,0 +1,147 @@
+python model_predict.py --model_path /camp/home/weie/lab_space_weie/almeida/groups/stark/almeida/Papers/Enhancer_design/Data/Accessibility_model_files/Results_fold01_CNS_DeepSTARR2_rep1 --sequence_path /camp/home/weie/lab_space_weie/trial/new_combined_filtered_accessibility.fa
+
+
+
+
+python3 -m remote_ikernel manage --add \
+    --kernel_cmd="ml purge && ml cuDNN/7.6.4.38-gcccuda-2019b && conda activate remote-conda-example && ipython3 kernel -f {connection_file}" \
+    --name="remote-conda-example" \
+    --interface=local \
+    --workdir="~/" \
+    --language=python3
+
+
+
+python3 -m remote_ikernel manage --add \
+--kernel_cmd="ml purge && ml cuDNN/8.1.0-CUDA-11.2.2 && conda activate remote-conda-example && ipython3 kernel -f {connection_file}" \
+--name="remote-conda-example" \
+--interface=local \
+--workdir="~/" \
+--language=python3
+
+
+
+
+ml Anaconda3
+source /camp/apps/eb/software/Anaconda/conda.env.sh
+conda activate jupyter_tf
+
+
+python3 -m remote_ikernel manage --add \
+    --kernel_cmd="ml purge && conda activate jupyter_tf && ipython3 kernel -f {connection_file}" \
+    --name="jupyter_tf" \
+    --interface=local \
+    --workdir="~/" \
+    --language=python3
+
+
+echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/' > $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh
+Copy
+
+ 
+
+awk 'NR==FNR{l[$0];next} (FNR in l){print > "train_train.fa"; next} {print > "train_val.fa"}' train_train_idx.txt train_fasta.fa
+
+conda deactivate
+
+
+awk 'NR==FNR{a[$1];next} (FNR in a)' train_idx.txt ../trial/new_fasta.fa > train_sequences.fasta
+awk 'NR==FNR{a[$1];next} (FNR in a)' val_idx.txt ../trial/new_fasta.fa > val_sequences.fasta
+awk 'NR==FNR{a[$1];next} (FNR in a)' test_idx.txt ../trial/new_fasta.fa > test_sequences.fasta
+
+
+
+ln -s /camp/home/weie/.conda/envs/jupyter_tf/lib/python3.9/site-packages/tensorrt/libnvinfer_plugin.so.8 /camp/home/weie/.conda/envs/jupyter_tf/lib/python3.9/site-packages/tensorrt/libnvinfer_plugin.so.7
+
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/camp/home/weie/.conda/envs/jupyter_tf/lib/python3.9/site-packages/tensorrt/
+
+
+
+awk 'NR==FNR{a[$1];next} (FNR in a)' train_condensed_idx.txt ../training/train_sequences.fasta > train_condensed.fasta
+
+
+pd.read_csv(file_path, sep=" ", usecols=[label_column])[label_column].values
+
+
+~/lab_space_weie/almeida/groups/stark/almeida/Papers/Enhancer_design/Data/Accessibility_model_files/Results_fold01_brain_DeepSTARR2_rep1
+
+
+python run_DeepSHAP_DeepExplainer.py -m ~/lab_space_weie/almeida/groups/stark/almeida/Papers/Enhancer_design/Data/Accessibility_model_files/Results_fold01_brain_DeepSTARR2_rep1 -s ~/lab_space_weie/almeida/groups/stark/almeida/Papers/Enhancer_design/Data/Accessibility_models_training_data/fold01_sequences_Test.fa -b random
+
+
+
+
+python run_DeepSHAP_DeepExplainer.py -m ~/lab_space_weie/almeida/groups/stark/almeida/Papers/Enhancer_design/Data/Accessibility_model_files/Results_fold01_brain_DeepSTARR2_rep1/Model -s ~/lab_space_weie/almeida/groups/stark/almeida/Papers/Enhancer_design/Data/Accessibility_models_training_data/fold01_sequences_Test_toy.fa -b random
+
+
+
+awk -v OFS='\t' '{print $1, $2 - 425, $3 + 425}' ~/lab_space_weie/notlogged_coverage/intersected_columns.bed > ~/lab_space_weie/notlogged_coverage/updated_coordinates.bed
+
+awk 'NR==FNR{lines[$1]; next} !(FNR in lines)' pos_samples_nan_idx.txt /camp/home/weie/lab_space_weie/notlogged_coverage/filtered_pos.fasta > temp_filtered_pos.txt
+
+awk 'NR==FNR{lines[$1]; next} !(FNR in lines)' pos_samples_filtered_idx.txt temp_filtered_pos.txt > filtered_noNaN_pos.fasta
+
+
+python extract_sequences.py pos_samples_filtered.csv /nemo/lab/briscoej/home/users/delasj/hpc_camp/Glial_ATAC/results/genome/genome.fa filtered_rc_pos.fasta
+
+python ../../pos_samples/newextract_seq_revcom.py neg_single_samples_filtered.csv  /nemo/lab/briscoej/home/users/delasj/hpc_camp/Glial_ATAC/results/genome/genome.fa filtered_rc_neg.fasta
+
+python extract_seq.py pos_samples_filtered.csv /nemo/lab/briscoej/home/users/delasj/hpc_camp/Glial_ATAC/results/genome/genome.fa filtered_rc_pos.fasta
+
+
+head -n 1 shuffled_acc_pos.csv > combined_accessibility.csv
+tail -n +2 shuffled_acc_pos.csv >> combined_accessibility.csv
+tail -n +2 shuffled_acc_neg.csv >> combined_accessibility.csv
+
+
+cat file1.csv file2.csv > combined.csv
+
+
+cat shuffled_sequences_pos.fasta shuffled_sequences_neg.fasta > combined_sequences.fasta
+
+
+awk 'NR==FNR { lines[$1]; next } (FNR in lines) { print }' new_samples/test_idx_new.txt /camp/home/weie/lab_space_weie/notlogged_coverage/new/cleaned_stacked_sequences.fasta > new_samples/test_new.fasta
+
+awk 'NR==FNR { lines[$1]; next } (FNR in lines) { print }' new_samples/train_idx_new.txt /camp/home/weie/lab_space_weie/notlogged_coverage/new/cleaned_stacked_sequences.fasta > new_samples/train_new.fasta
+awk 'NR==FNR { lines[$1]; next } (FNR in lines) { print }' new_samples/val_idx_new.txt /camp/home/weie/lab_space_weie/notlogged_coverage/new/cleaned_stacked_sequences.fasta > new_samples/val_new.fasta
+
+awk 'NR==FNR { lines[$1]; next } FNR in lines { print }' "$indices_file" "$fasta_file" > "$output_file"
+
+
+python training_filename.py --label_column "WT_D5_p1_NFIAn.mRp.clN.bigWig" --lr_option 0.005 --epochs 120 --train_sequences_path "/camp/home/weie/lab_space_weie/training/new_samples/train.fasta" --train_labels_path "/camp/home/weie/lab_space_weie/training/new_samples/train.csv" --val_sequences_path "/camp/home/weie/lab_space_weie/training/new_samples/val.fasta" --val_labels_path "/camp/home/weie/lab_space_weie/training/new_samples/val.csv"
+
+
+grep -B1 -E '[Nn]' combined_sequences.fasta | grep '^>' | sed 's/^>//' > sequences_to_remove.txt
+
+awk 'BEGIN { while ((getline < "sequences_to_remove.txt") > 0) { seqs[$1] = 1 } }
+     /^>/ { header = substr($0, 2); if (header in seqs) { skip = 1 } else { skip = 0 } }
+     !skip { print }' combined_sequences.fasta > cleaned_fasta_file.fasta
+
+
+csvtk join -f 1,2,3 WT_D11_p1_NFIAp_pos.csv WT_D11_p2_NFIAp_pos.csv WT_D11_pM_NFIAp_pos.csv WT_D5_p1_NFIAn_pos.csv WT_D5_p2_NFIAn_pos.csv WT_D5_pM_NFIAn_pos.csv WT_D7_p1_NFIAn_pos.csv WT_D7_p2_NFIAn_pos.csv WT_D7_pM_NFIAn_pos.csv WT_D9_p1_NFIAn_pos.csv WT_D9_p2_NFIAn_pos.csv WT_D9_p2_NFIAp_pos.csv WT_D9_pM_NFIAn_pos.csv WT_D9_pM_NFIAp_pos.csv > new_merged_pos.csv
+
+
+awk 'NR==1; NR>1 {print $0; print $0}' neg_single_samples_filtered.csv > doubled_neg_single_samples_filtered.csv
+
+
+
+shuf -i 2-760891 | head -n 253630 > selected_line_numbers.txt
+
+
+
+awk 'FNR==NR{a[$1]; next} (FNR-1) in a' selected_idx.txt filtered_rc_neg.fasta > selected_neg_seqs.fasta
+
+
+
+csvtk join -f 1,2,3 WT_D5_p1_NFIAn_pos.csv WT_D5_p2_NFIAn_pos.csv WT_D5_pM_NFIAn_pos.csv WT_D7_p1_NFIAn_pos.csv WT_D7_p2_NFIAn_pos.csv WT_D7_pM_NFIAn_pos.csv WT_D9_p1_NFIAn_pos.csv WT_D9_p2_NFIAn_pos.csv WT_D9_p2_NFIAp_pos.csv WT_D9_pM_NFIAn_pos.csv WT_D9_pM_NFIAp_pos.csv WT_D11_p1_NFIAp_pos.csv WT_D11_p2_NFIAp_pos.csv WT_D11_pM_NFIAp_pos.csv > new_merged_neg.csv
+
+
+
+awk 'NR == 1 { print; next } { print; print $1 FS $1 }' /camp/home/weie/lab_space_weie/notlogged_coverage/new/stacked_accessibility.csv
+ > /camp/home/weie/lab_space_weie/notlogged_coverage/new/stacked_accessibility_duplicated.csv
+
+
+awk 'BEGIN { FS=","; OFS=","; row=1 }
+     { print $0; print $1 FS $1; row++; }
+     END { }' /camp/home/weie/lab_space_weie/notlogged_coverage/new/stacked_accessibility.csv

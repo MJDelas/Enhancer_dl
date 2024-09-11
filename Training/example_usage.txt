@@ -1,0 +1,5 @@
+#example usage
+
+
+
+train_OG_architecture_new_samples.py --name WT_D9_pM_NFIAp --lr_option 0.001 --epochs 150 --batch_size 128 --train_sequences_path /camp/home/weie/lab_space_weie/macs2/training_files/fully_cleaned/WT_D9_pM_NFIAp_combined_others.fasta --train_labels_path /camp/home/weie/lab_space_weie/macs2/training_files/fully_cleaned/WT_D9_pM_NFIAp_combined_other_chr.csv --val_sequences_path /camp/home/weie/lab_space_weie/macs2/training_files/fully_cleaned/WT_D9_pM_NFIAp_combined_chr1.fasta --val_labels_path /camp/home/weie/lab_space_weie/macs2/training_files/fully_cleaned/WT_D9_pM_NFIAp_combined_chr1.csv --test_sequences_path /camp/home/weie/lab_space_weie/macs2/training_files/fully_cleaned/WT_D9_pM_NFIAp_combined_chr8.fasta --test_labels_path /camp/home/weie/lab_space_weie/macs2/training_files/fully_cleaned/WT_D9_pM_NFIAp_combined_chr8.csv
